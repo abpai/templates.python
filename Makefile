@@ -1,33 +1,43 @@
-.PHONY: help install install-dev test lint format format-check clean setup pre-commit-install pre-commit-run lock-check run
+.PHONY: help install install-dev setup pre-commit-install pre-commit-run lint format typecheck test clean lock-check run
 
 export PYTHONPATH := .
+VENV_DIR = .venv
 
 help:
-	@echo "Available commands:"
+	@echo 'Available commands:'
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-install: ## Install core dependencies
+install:
 	uv sync
 
-install-dev: ## Install core + dev dependencies
+install-dev:
 	uv sync --extra dev
 
-setup: install-dev pre-commit-install ## Full dev setup
+setup:
+	@if [ ! -d "$(VENV_DIR)" ]; then \
+		echo 'Creating virtual environment in $(VENV_DIR)...'; \
+		uv venv; \
+	fi
+	@echo 'Installing dependencies...'
+	@uv sync --extra dev
+	@echo 'Installing pre-commit hooks...'
+	@uv run pre-commit install
+	@echo '\n✅ Setup complete. To activate the environment, run:\nsource .venv/bin/activate'
 
-pre-commit-install: ## Install pre-commit hooks
+pre-commit-install:
 	uv run pre-commit install
 
-pre-commit-run: ## Run pre-commit on all files
+pre-commit-run:
 	uv run pre-commit run --all-files
 
-lint: ## Run Ruff linter
-	uv run ruff check .
+lint:
+	uv run ruff check . --fix
 
-format: ## Format code with Ruff
+format:
 	uv run ruff format .
 
-format-check: ## Check formatting (CI)
-	uv run ruff format --check .
+typecheck:
+		uv run pyright -p pyrightconfig.strict.json
 
 test: ## Run Pytest
 	uv run pytest
@@ -40,4 +50,4 @@ lock-check: ## Ensure uv.lock is up-to-date
 	uv sync --locked --extra dev
 
 run: ## Run the main application
-	uv run python main.py
+	uv run python src/main.py

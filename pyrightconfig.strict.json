@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/pyright/main/packages/pyright/dist/pyright.schema.json",
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    "**/typings"
+  ],
+  "typeCheckingMode": "basic",
+  "reportMissingImports": true,
+  "useLibraryCodeForTypes": true
+}
