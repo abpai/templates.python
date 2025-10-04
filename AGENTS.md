@@ -7,6 +7,8 @@ This document provides coding guidelines for AI agents working on this Python pr
 - **Tooling**: Use `uv` for all package management
 - **Python Version**: 3.13+
 - **Package Manager**: uv (fast, modern dependency management)
+- **Type Checker**: ty (Astral's fast type checker, alpha stage) - `make typecheck`
+  - Note: ty is in early development and may have bugs/missing features
 
 ## Code Style
 

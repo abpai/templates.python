@@ -7,6 +7,7 @@ This template is a **lean starting point** for Python projects that use:
 - ⚙️ Pydantic Settings – typed environment configuration
 - 📦 uv – fast dependency management / locking
 - 📝 structlog – structured logging
+- 🔍 ty – fast type checking (Rust-powered)
 
 ---
 
@@ -56,7 +57,7 @@ This template is a **lean starting point** for Python projects that use:
 | `make setup`       | Install dependencies + pre-commit hooks |
 | `make format`      | Format code with Ruff                   |
 | `make lint`        | Run Ruff linter                         |
-| `make typecheck`   | Run Pyright type checker                |
+| `make typecheck`   | Run ty type checker                     |
 | `make test`        | Run Pytest                              |
 | `make clean`       | Remove \*.pyc & cache directories       |
 | `make lock-check`  | Assert `uv.lock` is in sync             |
@@ -105,6 +106,21 @@ uv sync --extra ml
 ```
 
 Includes: PyTorch, scikit-learn, MLflow, matplotlib, numpy, pandas, and seaborn.
+
+---
+
+## Type Checking with ty
+
+This template uses [ty](https://github.com/astral-sh/ty), Astral's fast type checker written in Rust.
+
+**Note:** ty is in alpha and under active development. While production use is not yet recommended, it's suitable for experimentation and early adoption.
+
+```bash
+# Run ty type checker
+make typecheck
+```
+
+Configuration is in `pyproject.toml` under `[tool.ty]`.
 
 ---
 

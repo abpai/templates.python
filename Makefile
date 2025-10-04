@@ -36,8 +36,8 @@ lint:
 format:
 	uv run ruff format .
 
-typecheck:
-		uv run pyright
+typecheck: ## Run ty type checker
+		uv run ty check
 
 test: ## Run Pytest
 	uv run pytest
