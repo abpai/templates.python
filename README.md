@@ -6,6 +6,7 @@ This template is a **lean starting point** for Python projects that use:
 - 🧪 Pytest – testing
 - ⚙️ Pydantic Settings – typed environment configuration
 - 📦 uv – fast dependency management / locking
+- 📝 structlog – structured logging
 
 ---
 
@@ -30,7 +31,7 @@ This template is a **lean starting point** for Python projects that use:
     make setup
     ```
 
-3.  **Run the Quick-Start Agent Demo:**
+3.  **Run the Application:**
 
     ```bash
     # This will use your activated environment
@@ -42,7 +43,7 @@ This template is a **lean starting point** for Python projects that use:
     make format && make lint && make test
     ```
 
-`src/main.py` is a minimal script that spins up an assistant. Modify it to explore the SDK.
+`src/main.py` is a minimal script with structured logging. Modify it to build your application.
 
 ---
 
@@ -66,12 +67,10 @@ This template is a **lean starting point** for Python projects that use:
 
 `utils/settings.py` reads variables from a `.env` file or the environment.
 
-| Variable         | Default      | Description                         |
-| ---------------- | ------------ | ----------------------------------- |
-| `OPENAI_API_KEY` | (required)   | Your OpenAI API key.                |
-| `LOG_LEVEL`      | `INFO`       | `DEBUG`, `INFO`, `WARNING`, `ERROR` |
-| `LOG_FORMAT`     | `console`    | `console` (colored) or `json`.      |
-| `DEFAULT_MODEL`  | `gpt-5-nano` | Default model for agents.           |
+| Variable     | Default   | Description                         |
+| ------------ | --------- | ----------------------------------- |
+| `LOG_LEVEL`  | `INFO`    | `DEBUG`, `INFO`, `WARNING`, `ERROR` |
+| `LOG_FORMAT` | `console` | `console` (colored) or `json`.      |
 
 See `.env.example` for a template.
 
@@ -83,7 +82,7 @@ Only what you need, nothing more:
 
 ```
 ├── src/
-│   └── main.py               # Minimal OpenAI Agents example
+│   └── main.py               # Main application entry point
 ├── utils/
 │   └── settings.py           # Pydantic Settings helper
 ├── tests/
@@ -93,6 +92,19 @@ Only what you need, nothing more:
 ├── uv.lock                   # Locked dependency versions
 └── .github/workflows/        # CI (lint + test)
 ```
+
+---
+
+## Optional: ML Dependencies
+
+This template includes an optional ML dependency group for data science and machine learning projects:
+
+```bash
+# Install with ML dependencies
+uv sync --extra ml
+```
+
+Includes: PyTorch, scikit-learn, MLflow, matplotlib, numpy, pandas, and seaborn.
 
 ---
 

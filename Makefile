@@ -37,14 +37,17 @@ format:
 	uv run ruff format .
 
 typecheck:
-		uv run pyright -p pyrightconfig.strict.json
+		uv run pyright
 
 test: ## Run Pytest
 	uv run pytest
 
 clean: ## Remove caches & pyc files
 	find . -type f -name "*.pyc" -delete
-	find . -type d -name "__pycache__" -exec rm -rf {} +
+	find . -type d -name "pycache" -exec rm -rf {} +
+	find . -type d -name ".pytest_cache" -exec rm -rf {} +
+	find . -type d -name ".ruff_cache" -exec rm -rf {} +
+	rm -rf .pytest_cache .ruff_cache .mypy_cache .coverage
 
 lock-check: ## Ensure uv.lock is up-to-date
 	uv sync --locked --extra dev

@@ -1,6 +1,18 @@
-def test_settings_prefix_env(monkeypatch):  # type: ignore[arg-type]
-  monkeypatch.setenv('OPENAI_API_KEY', 'test')  # type: ignore[attr-defined]
+def test_settings_log_level(monkeypatch):  # type: ignore[arg-type]
   from utils.settings import get_settings
 
+  get_settings.cache_clear()  # Clear LRU cache
+  monkeypatch.setenv('LOG_LEVEL', 'DEBUG')  # type: ignore[attr-defined]
+
   settings = get_settings()
-  assert settings.openai_api_key == 'test'
+  assert settings.log_level == 'DEBUG'
+
+
+def test_settings_log_format(monkeypatch):  # type: ignore[arg-type]
+  from utils.settings import get_settings
+
+  get_settings.cache_clear()  # Clear LRU cache
+  monkeypatch.setenv('LOG_FORMAT', 'json')  # type: ignore[attr-defined]
+
+  settings = get_settings()
+  assert settings.log_format == 'json'

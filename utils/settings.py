@@ -11,17 +11,11 @@ from pydantic_settings import BaseSettings
 class AppSettings(BaseSettings):
   """Environment-driven application settings."""
 
-  # OpenAI key is required by the Agents SDK
-  openai_api_key: str = Field(..., alias='OPENAI_API_KEY')
-
   # General logging level (DEBUG / INFO / WARNING / ERROR)
   log_level: str = Field('INFO', alias='LOG_LEVEL')
 
   # Logging format ('console' or 'json')
   log_format: str = Field('console', alias='LOG_FORMAT')
-
-  # Default model for agents
-  default_model: str = Field('gpt-4o-mini', alias='DEFAULT_MODEL')
 
   model_config = {
     'env_file': '.env',
@@ -83,7 +77,7 @@ def configure_logging(level: str | None = None) -> None:
 
   # Tame noisy library loggers when not in DEBUG mode
   if log_level > logging.DEBUG:
-    for logger_name in ['httpx', 'openai']:
+    for logger_name in ['httpx']:
       logging.getLogger(logger_name).setLevel(logging.WARNING)
 
 

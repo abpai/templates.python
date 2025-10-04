@@ -1,39 +1,38 @@
 [project]
 name = "templates.python"
-version = "0.2.0"
+version = "0.3.0"
 description = "A boilerplate for Python projects."
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 license = {text = "MIT"}
 authors = [
     {name = "Andy Pai", email = "andy@r2pi.co"},
 ]
 
 dependencies = [
-    "openai-agents>=0.2.2",
-    "pydantic>=2.11.7",
-    "pydantic-settings>=2.10.1",
-    "structlog>=24.0.0",
-    "tqdm>=4.65.0",
+    "pydantic>=2.11.10",
+    "pydantic-settings>=2.11.0",
+    "structlog>=25.4.0",
+    "tqdm>=4.67.1",
 ]
 
 [project.optional-dependencies]
 dev = [
     "ipykernel>=6.30.1",
-    "pre-commit>=4.2.0",
-    "pyright>=1.1.405",
-    "pytest>=8.4.1",
+    "pre-commit>=4.3.0",
+    "pyright>=1.1.406",
+    "pytest>=8.4.2",
     "pytest-cov>=6.2.1",
-    "ruff>=0.12.11",
+    "ruff>=0.13.3",
 ]
 
 ml = [
   "torch>=2.7.1",
   "scikit-learn>=1.7.1",
   "mlflow>=3.1.1",
-  "matplotlib>=3.10.3",
-  "numpy>=2.3.1",
-  "pandas>=2.3.1",
+  "matplotlib>=3.10.6",
+  "numpy>=2.3.3",
+  "pandas>=2.3.3",
   "seaborn>=0.13.2",
 ]
 
@@ -63,7 +62,7 @@ line-ending = "auto"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
+python_files = ["test_*.py"]
 addopts = ["-ra"]
 pythonpath = ["."]
 
@@ -75,5 +74,5 @@ typeCheckingMode = "off"
 reportMissingImports = true
 reportMissingTypeStubs = false
 
-pythonVersion = "3.12"
+pythonVersion = "3.13"
 pythonPlatform = "All"
