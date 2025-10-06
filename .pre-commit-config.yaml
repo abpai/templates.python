@@ -22,7 +22,7 @@ repos:
     hooks:
       - id: pytest-check
         name: pytest-check
-        entry: bash -c "PYTHONPATH=. uv run pytest --co -q -m \"not integration\""
+        entry: bash -c "PYTHONPATH=. uv run pytest --co -q"
         language: system
         pass_filenames: false
         always_run: true
