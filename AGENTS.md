@@ -15,11 +15,23 @@ This document provides coding guidelines for AI agents working on this Python pr
 **Format**: 2-space indentation, single quotes, 88-character lines, `snake_case` variables/functions, `PascalCase` classes, boolean flags prefixed with `is_/has_/should_`. Pre-commit hooks ensure code quality on commit.
 
 **Docstrings**:
+
 - Use simple one-line docstrings for most functions - be concise and descriptive
 - Type hints replace Args/Returns documentation - don't duplicate what's in the signature
 - No Examples section - type hints + function name should be self-explanatory
 - Exception: Top-level user-facing APIs may include brief usage notes if necessary
 - Rationale: Modern Python with PEP 484 type hints makes verbose docstrings redundant
+
+**Comments**:
+
+- Avoid narrating the code; prefer clear names and small functions
+- Comments should explain *why* (tradeoffs, invariants, pitfalls), not *what*
+- Delete commented-out code instead of keeping it around
+
+**Naming**:
+
+- Prefer domain-specific, intention-revealing names over generic ones (`process`, `handle`, `manager`, `util`)
+- Keep public API names stable and unsurprising; avoid cleverness
 
 ## Architecture Principles
 
@@ -32,6 +44,7 @@ This document provides coding guidelines for AI agents working on this Python pr
 **Factory functions**: Standalone functions (`get_backend()`, `resolve_config()`) that map configurations to implementations.
 
 **Resource management**:
+
 - Reference counting for expensive resources (connections, clients) with acquire/release semantics
 - Context managers (`__enter__`/`__exit__`) for automatic cleanup
 - Track ownership with boolean flags to avoid closing borrowed resources
@@ -44,7 +57,7 @@ This document provides coding guidelines for AI agents working on this Python pr
 
 **Performance**: Use `@dataclass(slots=True)` for frequently-instantiated objects and `TypeVar` for type-safe generic protocols.
 
-**Resilience**: Exponential backoff for network operations, graceful empty returns over exceptions, debug logging for key metrics.
+**Resilience**: Exponential backoff for network operations, graceful empty returns over exceptions, debug logging for key metrics. Keep error handling targeted (catch specific exceptions, add context, re-raise/convert).
 
 ## Best Practices
 
@@ -55,20 +68,22 @@ This document provides coding guidelines for AI agents working on this Python pr
 - Pipeline pattern: chain transformations with clear inputs/outputs
 - No excessive error handling or low-value comments
 
+## Code Quality Bar (What to Avoid)
+
+When generating code, optimize for reviewability and long-term maintainability.
+
+- **Unnecessary comments**: If a comment just restates the code, remove it and improve naming/structure instead
+- **Long docstrings**: Keep most docstrings to a single line; only expand when a public API truly needs usage notes
+- **Overly defensive code**: Don’t add “just in case” checks everywhere; validate at boundaries and trust validated data internally
+- **Broad `try/except`**: Avoid wrapping whole functions; don’t swallow exceptions; catch specific errors only to recover or add context
+- **Deep nesting**: Prefer guard clauses and extraction to keep indentation shallow (avoid multi-level `if/for/try`)
+- **Bad abstractions**: Don’t create classes/protocols/layers without clear value; avoid one-method wrappers and “framework-building”
+- **Vague naming**: Avoid generic verbs (`do`, `process`, `handle`) and generic buckets (`utils`, `helpers`) for core logic
+- **Weak typing / schemas**: Avoid `Any` and unstructured `dict[str, Any]` in core code; prefer Pydantic models (or narrow typed objects) with explicit fields and validation
+- **Noisy error handling**: Prefer a small number of well-placed domain exceptions over many `RuntimeError`/`ValueError` catch-alls
+
 ## Pydantic Commitment
 
 - All interface models use Pydantic `BaseModel` (not dataclasses)
 - Validation, `.model_dump()`, JSON serialization built-in
 - Reserve `@dataclass(slots=True)` only for inner performance-critical helpers (graph traversal caches, etc.)
-
-## Codex Commands
-
-Conventions:
-- Any user message that **starts with** `!` is a command.
-- Be non-verbose. For commands, print a single status line (or a short block) on success/failure.
-- Use UTC timestamps. Touch only files inside this repo.
-- If a directory you need doesn’t exist, create it.
-
-Commands:
-
-- `!summarize [slug]`: Read `.codex/commands/summarize.md` for command instructions.

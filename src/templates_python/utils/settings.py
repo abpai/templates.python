@@ -45,7 +45,10 @@ def configure_logging(level: str | None = None) -> None:
 
   # Configure the root logger and handlers
   logging.basicConfig(
-    level=log_level, format='%(message)s', handlers=[logging.StreamHandler()]
+    level=log_level,
+    format='%(message)s',
+    handlers=[logging.StreamHandler()],
+    force=True,
   )
 
   # Determine the final renderer based on the format
@@ -79,7 +82,3 @@ def configure_logging(level: str | None = None) -> None:
   if log_level > logging.DEBUG:
     for logger_name in ['httpx']:
       logging.getLogger(logger_name).setLevel(logging.WARNING)
-
-
-# Provide a module-level settings instance for convenience
-settings = get_settings()

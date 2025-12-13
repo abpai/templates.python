@@ -1,6 +1,4 @@
 .PHONY: help install install-dev setup pre-commit-install pre-commit-run lint format typecheck test clean lock-check run
-
-export PYTHONPATH := .
 VENV_DIR = .venv
 
 help:
@@ -37,14 +35,14 @@ format:
 	uv run ruff format .
 
 typecheck: ## Run ty type checker
-		uv run ty check
+	uv run ty check
 
 test: ## Run Pytest
 	uv run pytest
 
 clean: ## Remove caches & pyc files
 	find . -type f -name "*.pyc" -delete
-	find . -type d -name "pycache" -exec rm -rf {} +
+	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type d -name ".pytest_cache" -exec rm -rf {} +
 	find . -type d -name ".ruff_cache" -exec rm -rf {} +
 	rm -rf .pytest_cache .ruff_cache .mypy_cache .coverage
@@ -53,4 +51,4 @@ lock-check: ## Ensure uv.lock is up-to-date
 	uv sync --locked --extra dev
 
 run: ## Run the main application
-	uv run python src/main.py
+	uv run templates-python

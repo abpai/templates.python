@@ -1,5 +1,9 @@
 # Python Boilerplate
 
+![CI](https://github.com/abpai/templates.python/actions/workflows/ci.yml/badge.svg)
+![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 This template is a **lean starting point** for Python projects that use:
 
 - ✅ Ruff – formatting & linting
@@ -44,7 +48,7 @@ This template is a **lean starting point** for Python projects that use:
     make format && make lint && make test
     ```
 
-`src/main.py` is a minimal script with structured logging. Modify it to build your application.
+`src/templates_python/main.py` is a minimal entry point with structured logging. Modify it to build your application.
 
 ---
 
@@ -66,7 +70,7 @@ This template is a **lean starting point** for Python projects that use:
 
 ## Environment Variables
 
-`utils/settings.py` reads variables from a `.env` file or the environment.
+`src/templates_python/utils/settings.py` reads variables from a `.env` file or the environment.
 
 | Variable     | Default   | Description                         |
 | ------------ | --------- | ----------------------------------- |
@@ -83,15 +87,16 @@ Only what you need, nothing more:
 
 ```
 ├── src/
-│   └── main.py               # Main application entry point
-├── utils/
-│   └── settings.py           # Pydantic Settings helper
+│   └── templates_python/
+│       ├── main.py           # Main application entry point
+│       └── utils/
+│           └── settings.py   # Pydantic Settings helper
 ├── tests/
-│   └── test_basic.py         # Single sanity-check test
+│   └── test_settings.py      # Settings validation tests
 ├── Makefile                  # Workflow commands
 ├── pyproject.toml            # Project + dependency config
 ├── uv.lock                   # Locked dependency versions
-└── .github/workflows/        # CI (lint + test)
+└── .github/workflows/        # CI (lint + typecheck + test)
 ```
 
 ---
@@ -121,6 +126,27 @@ make typecheck
 ```
 
 Configuration is in `pyproject.toml` under `[tool.ty]`.
+
+---
+
+## Code Style
+
+This project uses **2-space indentation** and **single quotes** (configured in Ruff). While Python conventionally uses 4-space indentation, 2-space is a deliberate choice for more compact code. The formatter enforces this automatically.
+
+Key style settings:
+- Indent: 2 spaces
+- Quotes: Single (`'`)
+- Line length: 88 characters
+
+---
+
+## First Things To Edit
+
+When copying this template into a new project, update:
+
+- `[project] name`, `description`, `authors`, and `version` in `pyproject.toml`
+- The import package name under `src/` (rename `templates_python/` to your project slug)
+- The CLI entry in `[project.scripts]`
 
 ---
 

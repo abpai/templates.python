@@ -12,7 +12,7 @@ repos:
       - id: check-docstring-first
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.13.3
+    rev: v0.14.8
     hooks:
       - id: ruff
         args: [--fix]
@@ -22,7 +22,7 @@ repos:
     hooks:
       - id: pytest-check
         name: pytest-check
-        entry: bash -c "PYTHONPATH=. uv run pytest --co -q"
+        entry: bash -c "uv run pytest --co -q"
         language: system
         pass_filenames: false
         always_run: true
