@@ -5,13 +5,13 @@ help:
 	@echo 'Available commands:'
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-install:
+install: ## Install production dependencies
 	uv sync
 
-install-dev:
+install-dev: ## Install development dependencies
 	uv sync --extra dev
 
-setup:
+setup: ## Initialize development environment
 	@if [ ! -d "$(VENV_DIR)" ]; then \
 		echo 'Creating virtual environment in $(VENV_DIR)...'; \
 		uv venv; \
@@ -22,16 +22,16 @@ setup:
 	@uv run pre-commit install
 	@echo '\n✅ Setup complete. To activate the environment, run:\nsource .venv/bin/activate'
 
-pre-commit-install:
+pre-commit-install: ## Install pre-commit hooks
 	uv run pre-commit install
 
-pre-commit-run:
+pre-commit-run: ## Run pre-commit hooks on all files
 	uv run pre-commit run --all-files
 
-lint:
+lint: ## Run linter (ruff)
 	uv run ruff check . --fix
 
-format:
+format: ## Run formatter (ruff)
 	uv run ruff format .
 
 typecheck: ## Run ty type checker

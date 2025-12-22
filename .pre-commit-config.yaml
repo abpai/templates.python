@@ -12,11 +12,13 @@ repos:
       - id: check-docstring-first
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.8
+    rev: v0.14.10
     hooks:
       - id: ruff
-        args: [--fix]
+        args: [--fix] # optional auto-fix
+        types_or: [python, pyi, jupyter]
       - id: ruff-format
+        types_or: [python, pyi, jupyter]
 
   - repo: local
     hooks:
