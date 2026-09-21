@@ -1,54 +1,61 @@
-.PHONY: help install install-dev setup pre-commit-install pre-commit-run lint format typecheck test clean lock-check run
-VENV_DIR = .venv
+.DEFAULT_GOAL := help
+.PHONY: help install install-dev setup pre-commit-install pre-commit-run lint lint-fix format format-check typecheck test check clean lock-check run build quality quality-advisory quality-test
 
-help:
-	@echo 'Available commands:'
+help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-install: ## Install production dependencies
-	uv sync
+install: ## Install production dependencies only
+	uv sync --locked --no-dev
 
-install-dev: ## Install development dependencies
-	uv sync --extra dev
+install-dev: ## Install core and development dependencies
+	uv sync --locked
 
-setup: ## Initialize development environment
-	@if [ ! -d "$(VENV_DIR)" ]; then \
-		echo 'Creating virtual environment in $(VENV_DIR)...'; \
-		uv venv; \
-	fi
-	@echo 'Installing dependencies...'
-	@uv sync --extra dev
-	@echo 'Installing pre-commit hooks...'
-	@uv run pre-commit install
-	@echo '\n✅ Setup complete. To activate the environment, run:\nsource .venv/bin/activate'
+setup: install-dev pre-commit-install ## Set up development tools and Git hooks
 
 pre-commit-install: ## Install pre-commit hooks
-	uv run pre-commit install
+	uv run --locked pre-commit install
 
-pre-commit-run: ## Run pre-commit hooks on all files
-	uv run pre-commit run --all-files
+pre-commit-run: ## Run pre-commit hooks on all tracked files
+	uv run --locked pre-commit run --all-files
 
-lint: ## Run linter (ruff)
-	uv run ruff check . --fix
+lint: ## Check lint rules without changing files
+	uv run --locked ruff check .
 
-format: ## Run formatter (ruff)
-	uv run ruff format .
+lint-fix: ## Apply safe lint fixes
+	uv run --locked ruff check . --fix
 
-typecheck: ## Run ty type checker
-	uv run ty check
+format: ## Format Python code
+	uv run --locked ruff format .
 
-test: ## Run Pytest
-	uv run pytest
+format-check: ## Check formatting without changing files
+	uv run --locked ruff format --check .
 
-clean: ## Remove caches & pyc files
-	find . -type f -name "*.pyc" -delete
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	find . -type d -name ".pytest_cache" -exec rm -rf {} +
-	find . -type d -name ".ruff_cache" -exec rm -rf {} +
-	rm -rf .pytest_cache .ruff_cache .mypy_cache .coverage
+typecheck: ## Run ty type checking
+	uv run --locked ty check
 
-lock-check: ## Ensure uv.lock is up-to-date
-	uv sync --locked --extra dev
+test: ## Run tests with branch coverage
+	uv run --locked pytest
 
-run: ## Run the main application
-	uv run templates-python
+check: lock-check lint format-check typecheck quality quality-test test ## Run all local quality checks
+
+clean: ## Remove generated caches without traversing environments or Git
+	find src tests -type d -name __pycache__ -prune -exec rm -rf {} +
+	rm -rf .pytest_cache .ruff_cache .mypy_cache htmlcov .coverage coverage.xml
+
+lock-check: ## Check lockfile freshness without installing packages
+	uv lock --check
+
+run: ## Run with production dependencies
+	uv run --locked --no-dev templates-python
+
+build: ## Build a source archive and wheel
+	uv build
+
+quality: ## Block new or worsening complexity and unsafe type suppressions
+	uv run --locked --project tools/quality python tools/quality/check.py
+
+quality-advisory: ## Report annotation, API-size, exception, and performance advice
+	uv run --locked --project tools/quality python tools/quality/check.py --advisory
+
+quality-test: ## Test the quality policy itself
+	uv run --locked --project tools/quality python -m unittest discover -s tools/quality -p 'test_*.py'

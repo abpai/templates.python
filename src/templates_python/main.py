@@ -2,13 +2,14 @@
 
 import structlog
 
-from .utils.settings import configure_logging, get_settings
+from .utils.logging import configure_logging
+from .utils.settings import get_settings
 
 
-def main():
+def main() -> None:
   """Run the main application logic."""
   settings = get_settings()
-  configure_logging(settings.log_level)
+  configure_logging(settings)
   log = structlog.get_logger(__name__)
   log.info('Application started', log_level=settings.log_level)
 

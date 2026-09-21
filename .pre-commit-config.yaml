@@ -5,26 +5,47 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
+      - id: check-toml
       - id: check-added-large-files
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: debug-statements
       - id: check-docstring-first
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.10
-    hooks:
-      - id: ruff
-        args: [--fix] # optional auto-fix
-        types_or: [python, pyi, jupyter]
-      - id: ruff-format
-        types_or: [python, pyi, jupyter]
-
   - repo: local
     hooks:
-      - id: pytest-check
-        name: pytest-check
-        entry: bash -c "uv run pytest --co -q"
+      - id: ruff-check
+        name: Ruff lint (locked project version)
+        entry: uv run --locked ruff check --fix
+        language: system
+        types_or: [python, pyi, jupyter]
+      - id: ruff-format
+        name: Ruff format (locked project version)
+        entry: uv run --locked ruff format
+        language: system
+        types_or: [python, pyi, jupyter]
+      - id: ty-check
+        name: ty check
+        entry: uv run --locked ty check
+        language: system
+        pass_filenames: false
+        types_or: [python, pyi]
+      - id: uv-lock-check
+        name: uv lock check
+        entry: uv lock --check
+        language: system
+        pass_filenames: false
+        files: ^(pyproject\.toml|uv\.lock)$
+
+      - id: python-quality
+        name: Python quality (complexity and type-suppression policy)
+        entry: uv run --locked --project tools/quality python tools/quality/check.py
         language: system
         pass_filenames: false
         always_run: true
+      - id: python-quality-tests
+        name: Python quality policy tests
+        entry: uv run --locked --project tools/quality python -m unittest discover -s tools/quality -p test_*.py
+        language: system
+        pass_filenames: false
+        files: ^(tools/quality/|pyproject\.toml$)
