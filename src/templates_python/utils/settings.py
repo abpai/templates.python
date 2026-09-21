@@ -1,84 +1,34 @@
-"""Application settings and logging configuration."""
+"""Validated application settings."""
 
-import logging
 from functools import lru_cache
+from typing import Literal
 
-import structlog
-from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic import field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class AppSettings(BaseSettings):
-  """Environment-driven application settings."""
+  """Immutable settings loaded from the environment and an optional .env file."""
 
-  # General logging level (DEBUG / INFO / WARNING / ERROR)
-  log_level: str = Field('INFO', alias='LOG_LEVEL')
+  model_config = SettingsConfigDict(
+    env_file='.env',
+    env_file_encoding='utf-8',
+    case_sensitive=False,
+    extra='ignore',
+    frozen=True,
+  )
 
-  # Logging format ('console' or 'json')
-  log_format: str = Field('console', alias='LOG_FORMAT')
+  log_level: Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] = 'INFO'
+  log_format: Literal['console', 'json'] = 'console'
 
-  model_config = {
-    'env_file': '.env',
-    'env_file_encoding': 'utf-8',
-    'case_sensitive': False,
-  }
+  @field_validator('log_level', mode='before')
+  @classmethod
+  def normalize_log_level(cls, value: object) -> object:
+    """Accept conventional lowercase log levels without hiding invalid values."""
+    return value.strip().upper() if isinstance(value, str) else value
 
 
 @lru_cache(maxsize=1)
 def get_settings() -> AppSettings:
-  """Return cached application settings."""
-  return AppSettings()  # type: ignore[arg-type]
-
-
-def configure_logging(level: str | None = None) -> None:
-  """Configure structlog + stdlib logging."""
-  settings = get_settings()
-  level = level or settings.log_level
-  log_format = settings.log_format
-  log_level = getattr(logging, level.upper(), logging.INFO)
-
-  # These processors are shared by all logs
-  shared_processors: list[structlog.types.Processor] = [
-    structlog.stdlib.add_log_level,
-    structlog.processors.TimeStamper(fmt='iso'),
-  ]
-
-  # Configure the root logger and handlers
-  logging.basicConfig(
-    level=log_level,
-    format='%(message)s',
-    handlers=[logging.StreamHandler()],
-    force=True,
-  )
-
-  # Determine the final renderer based on the format
-  if log_format == 'json':
-    final_processor = structlog.processors.JSONRenderer()
-  else:
-    final_processor = structlog.dev.ConsoleRenderer(colors=True)
-
-  # Configure structlog to process all logs
-  structlog.configure(
-    processors=[
-      *shared_processors,
-      structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
-    ],
-    logger_factory=structlog.stdlib.LoggerFactory(),
-    wrapper_class=structlog.stdlib.BoundLogger,
-    cache_logger_on_first_use=True,
-  )
-
-  # Create a formatter to apply our processor chain to all logs
-  formatter = structlog.stdlib.ProcessorFormatter(
-    foreign_pre_chain=shared_processors,
-    processor=final_processor,
-  )
-
-  # Replace the default handler's formatter with our structlog formatter
-  for handler in logging.root.handlers:
-    handler.setFormatter(formatter)
-
-  # Tame noisy library loggers when not in DEBUG mode
-  if log_level > logging.DEBUG:
-    for logger_name in ['httpx']:
-      logging.getLogger(logger_name).setLevel(logging.WARNING)
+  """Return settings cached for the lifetime of the application."""
+  return AppSettings()

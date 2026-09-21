@@ -1,0 +1,19 @@
+[project]
+name = "python-quality-tools"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+  "anti-slop-py==0.1.0",
+  "complexipy==8.0.1",
+  "ruff==0.16.8",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+anti-slop-py = { git = "https://github.com/TinyFrontier/anti-slop-py", rev = "86ea16d3abb2322e0496c5b6da8cd6d5704166cf" }
+
+[tool.ruff]
+extend = "../../pyproject.toml"
+target-version = "py313"

@@ -30,3 +30,18 @@
 - **Defensive Coding**: Validate at boundaries, trust internals. No "just in case" checks.
 - **Deep Nesting**: Use guard clauses and early returns.
 - **Over-Abstraction**: No single-method classes or speculative layers.
+
+## Python quality gate
+
+- Run `make quality quality-test` for complexity and type-suppression policy.
+- Quality tools use their own locked Python 3.13 environment under `tools/quality`.
+- Cyclomatic complexity is capped at 10; cognitive complexity at 15. Existing
+  per-function allowances live in `tools/quality/complexity-baseline.json`.
+- Do not raise an allowance, add a suppression, or regenerate a baseline merely
+  to make a check pass. Explain the reason and review the baseline diff.
+- When improving a baselined function, lower or remove its allowance in the same
+  change so the improvement cannot be lost later. Moves/renames require review.
+- `make quality-advisory` reports annotation, API-size, broad-exception,
+  simplification and performance advice. Treat these as review prompts.
+- Input validation with `isinstance`, SDK adapters and tests that isolate external
+  effects remain allowed. Never remove validation or cleanup to lower a score.

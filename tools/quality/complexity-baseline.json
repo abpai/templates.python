@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "limits": {
+    "cyclomatic": 10,
+    "cognitive": 15
+  },
+  "allowances": {}
+}
