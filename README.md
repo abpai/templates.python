@@ -164,7 +164,14 @@ live separately under `src/templates_python/utils/`. Extend the functional core
 with domain code as needed; this template does not impose a web framework,
 database, or deployment target.
 
-## Migration from 0.4.0's original layout
+## Python quality policy
+
+Run `make quality quality-test` for the blocking complexity and type-suppression
+gates. Run `make quality-advisory` for annotation, API-size and design guidance.
+See [tools/quality/README.md](tools/quality/README.md) for scope, pinned tools,
+reviewed baselines and exceptions.
+
+## Migration from earlier copies
 
 - Replace `uv sync --extra dev` with `uv sync`; development tools now use a
   dependency group rather than a published extra.
@@ -177,10 +184,3 @@ database, or deployment target.
 ## License
 
 MIT. See [LICENSE](LICENSE).
-
-## Python quality policy
-
-Run `make quality quality-test` for the blocking complexity and type-suppression
-gates. Run `make quality-advisory` for annotation, API-size and design guidance.
-See [tools/quality/README.md](tools/quality/README.md) for scope, pinned tools,
-reviewed baselines and exceptions.

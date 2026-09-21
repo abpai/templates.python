@@ -63,6 +63,9 @@ select = [
 ]
 ignore = ["E501", "B008", "N812", "N803", "N806"]
 
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
 [tool.ruff.format]
 quote-style = "single"
 indent-style = "space"
@@ -131,6 +134,3 @@ no-string-attribute-access = "off"
 no-unsafe-dict-values = "off"
 no-widen-then-cast = "error"
 require-safety-comment = "error"
-
-[tool.ruff.lint.mccabe]
-max-complexity = 10

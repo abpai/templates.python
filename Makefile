@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help install install-dev setup pre-commit-install pre-commit-run lint lint-fix format format-check typecheck test check clean lock-check run build
+.PHONY: help install install-dev setup pre-commit-install pre-commit-run lint lint-fix format format-check typecheck test check clean lock-check run build quality quality-advisory quality-test
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -51,12 +51,11 @@ run: ## Run with production dependencies
 build: ## Build a source archive and wheel
 	uv build
 
-.PHONY: quality quality-advisory quality-test
 quality: ## Block new or worsening complexity and unsafe type suppressions
 	uv run --locked --project tools/quality python tools/quality/check.py
 
 quality-advisory: ## Report annotation, API-size, exception, and performance advice
 	uv run --locked --project tools/quality python tools/quality/check.py --advisory
 
-quality-test: ## Test the quality policy without ML dependencies or credentials
+quality-test: ## Test the quality policy itself
 	uv run --locked --project tools/quality python -m unittest discover -s tools/quality -p 'test_*.py'

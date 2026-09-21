@@ -47,6 +47,14 @@ def python_files(root: Path, paths: list[str]) -> list[Path]:
   return sorted(files)
 
 
+def scoped_paths(root: Path, config: dict, advisory: bool) -> list[str]:
+  """Blocking paths must exist; advisory-only paths may be untracked and absent."""
+  if not advisory:
+    return config['paths']
+  optional = config.get('advisory-paths', [])
+  return config['paths'] + [name for name in optional if (root / name).exists()]
+
+
 def run_json(command: list[str], root: Path) -> list[dict]:
   """Accept lint findings but reject tool errors and malformed output."""
   result = subprocess.run(command, cwd=root, capture_output=True, text=True)
@@ -235,10 +243,7 @@ def main() -> int:
   parser.add_argument('--advisory', action='store_true')
   options = parser.parse_args()
   config = tomllib.loads((ROOT / 'pyproject.toml').read_text())['tool']['quality']
-  paths = config['paths'] + (
-    config.get('advisory-paths', []) if options.advisory else []
-  )
-  files = python_files(ROOT, paths)
+  files = python_files(ROOT, scoped_paths(ROOT, config, options.advisory))
   if options.advisory:
     return advisory(files)
   limits = {'cyclomatic': config['cyclomatic'], 'cognitive': config['cognitive']}

@@ -21,7 +21,7 @@ def branchy_function(name: str = 'branchy', branches: int = 12) -> str:
 
 
 class QualityPolicyTests(unittest.TestCase):
-  """Keep policy regressions independent of the ML runtime."""
+  """Keep policy regressions independent of the application runtime."""
 
   def setUp(self) -> None:
     self.directory = tempfile.TemporaryDirectory()
@@ -124,6 +124,16 @@ class QualityPolicyTests(unittest.TestCase):
   def test_empty_scope_fails_closed(self) -> None:
     with self.assertRaises(ValueError):
       check.python_files(self.root, ['.'])
+
+  def test_absent_advisory_path_is_skipped(self) -> None:
+    (self.root / 'src').mkdir()
+    config = {'paths': ['src'], 'advisory-paths': ['scratch']}
+    self.assertEqual(check.scoped_paths(self.root, config, advisory=True), ['src'])
+    (self.root / 'scratch').mkdir()
+    self.assertEqual(
+      check.scoped_paths(self.root, config, advisory=True), ['src', 'scratch']
+    )
+    self.assertEqual(check.scoped_paths(self.root, config, advisory=False), ['src'])
 
   def test_missing_tool_fails_closed(self) -> None:
     with self.assertRaises(FileNotFoundError):

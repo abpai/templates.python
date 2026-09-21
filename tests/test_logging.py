@@ -74,6 +74,6 @@ def test_reconfiguration_updates_level_without_duplicate_logs() -> None:
   stream = StringIO()
   configure_logging(AppSettings(log_level='ERROR'), stream=stream)
   configure_logging(AppSettings(log_level='DEBUG', log_format='json'), stream=stream)
-  logging.getLogger('httpx').debug('Debug enabled')
+  logging.getLogger('example').debug('Debug enabled')
   events = [json.loads(line) for line in stream.getvalue().splitlines()]
   assert [event['event'] for event in events] == ['Debug enabled']

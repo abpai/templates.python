@@ -1,8 +1,7 @@
 # Python quality policy
 
 Run `make quality quality-test` from the repository root. CI and pre-commit run the same gate.
-The separate, locked Python 3.13 tool environment needs no application imports,
-ML environment, credentials, database or cloud service.
+The separate, locked Python 3.13 tool environment does not import the application.
 
 | Policy | Enforcement |
 | --- | --- |
@@ -43,8 +42,7 @@ positional), statements (40), branches, returns, broad exceptions, simplificatio
 and performance advice. Findings do not fail; tool/configuration errors do.
 These thresholds are in `check.py`.
 
-Typer callbacks, SDK adapters, fixtures and per-job/per-segment error boundaries
-need context. The gate permits `isinstance`, `object`, mocks, dynamic attributes,
+The gate permits `isinstance`, `object`, mocks, dynamic attributes,
 open dictionaries and names containing `shape`. Never remove input validation or
 alter cleanup semantics merely to lower a score. Prefer typed domain contracts
 where one exists, without adding wrappers just to satisfy lint.
@@ -72,7 +70,8 @@ suppression handling and valid boundary patterns.
 
 Blocking paths are in `[tool.quality]` in the application `pyproject.toml`. New
 Python files in these paths are checked, including untracked files. Add new
-top-level code directories explicitly. Notebook cells are excluded. Scope,
+top-level code directories explicitly. Advisory-only paths can be untracked, so
+absent ones are skipped; absent blocking paths fail. Notebook cells are excluded. Scope,
 policy and baseline changes require review like code changes. Application tests
 remain `make test`; static checks do not prove runtime or production parity.
 
