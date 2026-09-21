@@ -28,8 +28,11 @@ The gate itself and its tests also have no complexity allowances.
 
 Ruff 0.16.8, Complexipy 8.0.1 and anti-slop-py at commit
 `86ea16d3abb2322e0496c5b6da8cd6d5704166cf` are pinned in this directory's `uv.lock`.
-The audited upstream anti-slop source is an immutable Git dependency instead of
-a copied source tree; its license remains with the installed source package.
+The anti-slop source is an immutable Git dependency instead of a copied source
+tree; its license remains with the installed source package. The pin points to
+a fork of [TinyFrontier/anti-slop-py](https://github.com/TinyFrontier/anti-slop-py)
+at the same commit, so the gate still installs if the upstream repository goes away.
+The pinned commit uses only the standard library and does not run the code it checks.
 
 anti-slop-py requires Python 3.12+, so the gate runs on Python 3.13. The quality tools
 are separate from runtime dependencies. The existing application
@@ -77,4 +80,4 @@ remain `make test`; static checks do not prove runtime or production parity.
 
 References: [Ruff C901](https://docs.astral.sh/ruff/rules/complex-structure/),
 [Complexipy](https://complexipy.com/usage-guide/), and
-[the audited anti-slop source](https://github.com/TinyFrontier/anti-slop-py/tree/86ea16d3abb2322e0496c5b6da8cd6d5704166cf).
+[the pinned anti-slop source](https://github.com/abpai/anti-slop-py/tree/86ea16d3abb2322e0496c5b6da8cd6d5704166cf).
