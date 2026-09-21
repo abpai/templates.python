@@ -12,7 +12,7 @@ dependencies = [
 package = false
 
 [tool.uv.sources]
-anti-slop-py = { git = "https://github.com/TinyFrontier/anti-slop-py", rev = "86ea16d3abb2322e0496c5b6da8cd6d5704166cf" }
+anti-slop-py = { git = "https://github.com/abpai/anti-slop-py", rev = "86ea16d3abb2322e0496c5b6da8cd6d5704166cf" }
 
 [tool.ruff]
 extend = "../../pyproject.toml"
